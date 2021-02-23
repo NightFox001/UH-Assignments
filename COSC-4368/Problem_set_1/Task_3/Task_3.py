@@ -140,7 +140,7 @@ def aV3():
     numSolutions = 0
     firstNVA = 0
 
-    for e in range(1, maxE+1):
+    for e in range(maxE, 0, -1):
         nva += 1 #from assigning value to e
         for f in range(1, 30-e):
             nva += 1 #from assigning value to f
