@@ -32,6 +32,9 @@ def h22():
         f = (c**2 - 22*c + 120)/(c**2)
         if (f>1): print('c =', c, 'f =', f)
 
+def h33():
+    maxM = 51
+
 ## main ##
 
 # h20()
