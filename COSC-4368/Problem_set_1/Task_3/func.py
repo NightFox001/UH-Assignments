@@ -1,88 +1,7 @@
+from constraints import *
+
 global nva
 nva = 0
-
-def C1(B, C, E, F):
-    if ((B + C + E + F) < 51):
-        return True
-    return False
-def C1_v2(sumBC, E, F):
-    if ((sumBC + E + F) < 51):
-        return True
-    return False
-def C2(D, E, F):
-    if (D == (E + F + 21)):
-        return True
-    return False
-def C3(B, C, D, E, F):
-    if (D**2 == (E**2 * (B + C + E + F) + 417)):
-        return True
-    return False
-def C3_v2(sumBC, D, E, F):
-    if (D**2 == (E**2 * (sumBC + E + F) + 417)):
-        return True
-    return False
-def C5(e, g, h, i, j):
-    if h*j + e*12 == (g+i)**2: return True
-    return False
-def C6(b, c, d, e, g, f):
-    if (b+c+e+f) + d == (f-g)**2 - 1: return True
-    return False
-def C7(g, j):
-    if 4*j==g**2+39: return True
-    return False
-def C8(f, h, g, i):
-    if (i-g)**9==(f-h)**3 : return True
-    return False
-def C9(c, f, g):
-    if (g-c)**2== f*c*c +1 : return True
-    return False
-def C10(k, m):
-    if (2*m == k**2 -6): return True
-    return False
-def C11(f, i, n, o):
-    if ((n-o)**3 +7 == (f-i)*n): return True
-    return False
-def C12(m, n):
-    if (n**2 == m**2 +291): return True
-    return False
-def C13(b, g, h, i, o):
-    if (o**2 == g*h*i*b + 133): return True
-    return False
-def C14(k, m, o):
-    if (m + o == k**2 -10): return True
-    return False
-def C15(b, i, k, l):
-    if (l**3 + i == (l+b)*k): return True
-    return False    
-
-def checkConstraintsA(B, C, D, E, F):
-    if (C1(B, C, E, F) and C2(D, E, F) and C3(B, C, D, E, F)):
-        return True
-    return False
-
-def checkConstraintsA2(sumBC, D, E, F):
-    if (C1_v2(sumBC, E, F) and C2(D, E, F) and C3_v2(sumBC, D, E, F)):
-        return True
-    return False
-
-def checkConstraintsB(b, c, d, e, f, g, h, i, j):
-    # print('\nTesting C5-C9 with values:\nA =', (b + c + e + f), ', B =', b, ', C =', c, ', D =', d, ', E =', e, ', F =', f, ', G =', g, ', H =', h, ', I =', i, ', J =', j, '\n')
-    if C5(e, g, h, i, j) and C6(b, c, d, e, g, f) and C7(g, j) and C8(f, h, g, i,) and C9(c, f, g): return True
-    return False
-
-def checkConstraintsC(b, c, d, e, f, g, h, i, j, k, l, m, n, o):
-    # print('\nTesting C5-C9 with values:\nA =', (b + c + e + f), ', B =', b, ', C =', c, ', D =', d, ', E =', e, ', F =', f, ', G =', g, ', H =', h, ', I =', i, ', J =', j, ', M =', m, ', N =', n, '\n')
-    if C10(k, m) and C11(f, i, n, o) and C12(m, n) and C13(b, g, h, i, o) and C14(k, m, o) and C15(b, i, k, l): return True
-    return False
-
-def printAll(B, C, D, E, F):
-    print('A =', (B + C + E + F), ', B =', B, ', C =', C, ', D =', D, ', E =', E, ', F =', F)
-
-def printAllB(b, c, d, e, f, g, h, i, j):
-    print('A =', (b + c + e + f), ', B =', b, ', C =', c, ', D =', d, ', E =', e, ', F =', f, ', G =', g, ', H =', h, ', I =', i, ', J =', j)
-
-def printAllC(b, c, d, e, f, g, h, i, j, k, l, n, m, o):
-    print('A =', (b + c + e + f), ', B =', b, ', C =', c, ', D =', d, ', E =', e, ', F =', f, ', G =', g, ', H =', h, ', I =', i, ', J =', j, 'K =', k, ', L =', l, ', M =', m, ', N =', n, ', O =', o)
 
 # View H11 in doc: This function returns the required sum for B+C given E and F
 def sumBC(E, F):
@@ -93,7 +12,7 @@ def aV1():
     # V1 73,000
     minA = 4
     maxA = 50 # 
-    maxE = 8
+    maxE = 8 #view rule H9
     for f in range(1, 29):
         nva += 1 #from assigning value to f
         for e in range(1, maxE+1):
@@ -139,12 +58,6 @@ def aV3():
     print('V3')
     global nva
     maxE = 8
-    aMin, aMax = 50, 0
-    bMin, bMax = 50, 0
-    cMin, cMax = 50, 0
-    dMin, dMax = 50, 0
-    eMin, eMax = 50, 0
-    fMin, fMax = 50, 0
     numSolutions = 0
     firstNVA = 0
 
@@ -166,18 +79,7 @@ def aV3():
                         printAll(b, c, d, e, f)
                         if numSolutions==0: firstNVA = nva
                         numSolutions += 1
-                    if (a < aMin): aMin = a
-                    if (a > aMax): aMax = a
-                    if (b < bMin): bMin = b
-                    if (b > bMax): bMax = b
-                    if (c < cMin): cMin = c
-                    if (c > cMax): cMax = c
-                    if (d < dMin): dMin = d
-                    if (d > dMax): dMax = d
-                    if (e < eMin): eMin = e
-                    if (e > eMax): eMax = e
-                    if (f < fMin): fMin = f
-                    if (f > fMax): fMax = f
+
 
     print('Solutions found:', numSolutions)
     print('Fist solution found at nva:', firstNVA)
@@ -191,7 +93,9 @@ def aV4():
     global nva
     maxE = 8
     checks = 0
+    firstSolution = 0
     solutions = 0
+    
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1 #from assigning value to e
@@ -209,7 +113,8 @@ def aV4():
                     checks += 1
                     if (checkConstraintsA(b, int(sumBC(e, f))-b, (e + f + 21), e, f)):
                         # print('Solution found on guess #' + str(checks), 'and nva #' +str(nva))
-                        if (solutions < 1): 
+                        if (solutions < 1):
+                            firstSolution += 1 
                             print('Solution found!')
                             printAll(b, int(sumBC(e, f))-b, e + f + 21, e, f)
                             print('nva =', nva)
@@ -217,6 +122,7 @@ def aV4():
     
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t Total solutions found:', solutions)
     print('\t Total nva:', nva,'\n')
 
@@ -226,7 +132,9 @@ def aV5():
     global nva
     maxE = 8
     checks = 0
+    firstSolution = 0
     solutions = 0
+    
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1 #from assigning value to e
         for f in range(29-e, 0, -1):            # rule H12
@@ -243,7 +151,8 @@ def aV5():
                 checks += 1
                 if (checkConstraintsA(b, int(sumBC(e, f))-b, (e + f + 21), e, f)):
                     # print('Solution found on guess #' + str(checks), 'and nva #' +str(nva))
-                    if (solutions < 1): 
+                    if (solutions < 1):
+                        firstSolution += 1 
                         print('Solution found!')
                         printAll(b, int(sumBC(e, f))-b, e + f + 21, e, f)
                         print('nva =', nva)
@@ -251,6 +160,7 @@ def aV5():
 
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t Total solutions found:', solutions)
     print('\t Total nva:', nva,'\n')
 
@@ -260,7 +170,9 @@ def aV6():
     global nva
     maxE = 8
     checks = 0
+    firstSolution = 0
     solutions = 0
+    
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1 #from assigning value to e
@@ -277,8 +189,8 @@ def aV6():
 
                 checks += 1
                 if (checkConstraintsA(b, int(sumBC(e, f))-b, (e + f + 21), e, f)):
-                    # print('Solution found on guess #' + str(checks), 'and nva #' +str(nva))
-                    if (solutions < 1): 
+                    if (solutions < 1):
+                        firstSolution += 1 
                         print('Solution found!')
                         printAll(b, int(sumBC(e, f))-b, e + f + 21, e, f)
                         print('nva =', nva)
@@ -286,6 +198,7 @@ def aV6():
 
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t Total solutions found:', solutions)
     print('\t Total nva:', nva,'\n')
 
@@ -300,6 +213,7 @@ def bV1():
     solutionsForA = 0
     solutionsForB = 0
     checks = 0
+    firstSolution = 0
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1 #from assigning value to e
@@ -330,11 +244,14 @@ def bV1():
                                 print('Solution found!')
                                 printAllB(b, c, e+f+21, e, f, 11, h, i, 40)
                                 print('nva =', nva)
+                                if(solutionsForB<1):firstSolution = checks
                                 solutionsForB += 1
+                                
 
 
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t',solutionsForA, 'Solutions satisfied C1-C4')
     print('\t',solutionsForB, 'Solutions satisfied C1-C9')
     print('\t Total nva:', nva,'\n')
@@ -350,6 +267,7 @@ def bV2():
     solutionsForA = 0
     solutionsForB = 0
     checks = 0
+    firstSolution = 0
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1
@@ -394,10 +312,12 @@ def bV2():
                                 print('Solution found!')
                                 printAllB(b, c, e+f+21, e, f, 11, h, i, 40)
                                 print('nva =', nva)
+                                if(solutionsForB<1):firstSolution = checks
                                 solutionsForB += 1
 
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t',solutionsForA, 'Solutions satisfied C1-C4')
     print('\t',solutionsForB, 'Solutions satisfied C1-C9')
     print('\t Total nva:', nva,'\n')
@@ -413,6 +333,7 @@ def bV3():
     solutionsForA = 0
     solutionsForB = 0
     checks = 0
+    firstSolution = 0
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1
@@ -456,10 +377,12 @@ def bV3():
                         print('Solution found!')
                         printAllB(b, c, e+f+21, e, f, 11, h, i, 40)
                         print('nva =', nva)
+                        firstSolution = checks
                     solutionsForB += 1
 
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t',solutionsForA, 'Solutions satisfied C1-C4')
     print('\t',solutionsForB, 'Solutions satisfied C1-C9')
     print('\t Total nva:', nva,'\n')
@@ -475,6 +398,7 @@ def bV4():
     solutionsForA = 0
     solutionsForB = 0
     checks = 0
+    firstSolution = 0
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1
@@ -519,10 +443,12 @@ def bV4():
                     print('Solution found!')
                     printAllB(b, c, e+f+21, e, f, 11, h, i, 40)
                     print('nva =', nva)
+                    firstSolution = checks
                 solutionsForB += 1
 
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t',solutionsForA, 'Solutions satisfied C1-C4')
     print('\t',solutionsForB, 'Solutions satisfied C1-C9')
     print('\t Total nva:', nva,'\n')
@@ -538,6 +464,7 @@ def bV5():
     solutionsForA = 0
     solutionsForB = 0
     checks = 0
+    firstSolution = 0
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1 #from assigning value to e
@@ -567,11 +494,13 @@ def bV5():
                             print('Solution found!')
                             printAllB(b, c, e+f+21, e, f, 11, h, i, 40)
                             print('nva =', nva)
+                            firstSolution = checks
                         solutionsForB += 1
 
 
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t',solutionsForA, 'Solutions satisfied C1-C4')
     print('\t',solutionsForB, 'Solutions satisfied C1-C9')
     print('\t Total nva:', nva,'\n')
@@ -587,8 +516,10 @@ def cV1():
     solutionsForA = 0
     solutionsForB = 0
     solutionsForC = 0
-    firstGuess = 0
+    firstSolution = 0
+    checks = 0
     solutions = 0
+    
     firstNVA = 0
 
     for e in range(maxE, 0, -1):                # rule H9
@@ -641,9 +572,11 @@ def cV1():
                                 nva += 1
                                 for o in range(1, 51): 
                                     nva += 1
+                                    checks += 1
                                     if checkConstraintsC(b, c, (e+f+21), e, f, 11, h, i, 40, k, l, m, n, o):
-                                        solutionsForC += 1
                                         print('found c solution:', solutionsForC)
+                                        if(solutionsForC<1):firstSolution = checks
+                                        solutionsForC += 1
 
 
     # print('\n\nFirst solution found on guess #' + str(firstGuess), 'and with nva =', firstNVA)
@@ -663,10 +596,12 @@ def cV2():
     global nva
     maxE = 8
     checks = 0
+    firstSolution = 0
     solutionsForA = 0
     solutionsForB = 0
     solutionsForC = 0
     solutions = 0
+    
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1 #from assigning value to e
@@ -704,6 +639,7 @@ def cV2():
                                     nva += 1
                                     checks += 1
                                     if checkConstraintsC(b, c, (e+f+21), e, f, 11, h, i, 40, k, l, m, n, o):
+                                        if (solutionsForC<1): firstSolution = checks
                                         solutionsForC += 1
                                         printAllC(b, c, e+f+21, e, f, 11, h, i, 40, k, l, n, m, o)
                                         print('nva =', nva)
@@ -718,10 +654,12 @@ def cV3():
     global nva
     maxE = 8
     checks = 0
+    firstSolution = 0
     solutionsForA = 0
     solutionsForB = 0
     solutionsForC = 0
     solutions = 0
+    
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1
@@ -771,6 +709,7 @@ def cV3():
                         nva += 1
                         checks += 1
                         if checkConstraintsC(b, c, (e+f+21), e, f, 11, h, i, 40, k, l, m, n, o):
+                            if (solutionsForC<1): firstSolution = checks
                             solutionsForC += 1
                             printAllC(b, c, e+f+21, e, f, 11, h, i, 40, k, l, n, m, o)
                             print('nva =', nva)
@@ -779,6 +718,7 @@ def cV3():
     # print('\n\nFirst solution found on guess #' + str(firstGuess), 'and with nva =', firstNVA)
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t',solutionsForA, 'Solutions satisfied C1-C4')
     print('\t',solutionsForB, 'Solutions satisfied C1-C9')
     print('\t',solutionsForC, 'Solutions satisfied C1-C15')

@@ -1,0 +1,28 @@
+# Problem set 1 - Task 3
+
+This project requires main.py func.py and constraints.py to be together in the same workspace/folder/dir for full functionality
+proofs.py is included to help you visiulize some of the proofs working if you want to see it.
+
+## This entire project was built with 2 main goals in mind
+1. Make nva as small as possible
+2. Make everything as easy as possible for others to understand and hopefully learn something new
+
+# Quick start on how to use
+1. run main.py
+2. enter 'a', 'b', or 'c'
+doing this will automatically run the lastest version of a function to solve that problem
+
+## Extra usability
+I encluded multiple versions of each solution. This is so you can see how I started solving the problem 'aV1()' and what changes/optimazation I made, and in what order over time 'aV2()' 'aV3()' 'aV3()' ect.
+There are 6 versions of function a, 5 for b, and 4 for c. You may run an older version of a solution to see progression of results by navigating to this folder 'task_3' in terminal and typing the command 'python main.py' followed by a1-6 or b1-5 or c1-4. for example
+```
+python main.py a4
+or
+python main.py a6
+or
+python main.py b4
+or
+python main.py c2
+```
+
+This project was also built with maintainability and reusability in mind. The constraints.py file demonstrates this. When solving problem   

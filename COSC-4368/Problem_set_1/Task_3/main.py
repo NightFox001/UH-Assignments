@@ -1,41 +1,17 @@
 import sys
 import csv
-
 from func import *
+from constraints import *
 
 global nva
 nva = 0
 
-def C10(k, m):
-    if (2*m == k**2 -6): return True
-    return False
-def C11(f, i, n, o):
-    if ((n-o)**3 +7 == (f-i)*n): return True
-    return False
-def C12(m, n):
-    if (n**2 == m**2 +291): return True
-    return False
-def C13(b, g, h, i, o):
-    if (o**2 == g*h*i*b + 133): return True
-    return False
-def C14(k, m, o):
-    if (m + o == k**2 -10): return True
-    return False
-def C15(b, i, k, l):
-    if (l**3 + i == (l+b)*k): return True
-    return False    
-
-def checkConstraintsC(b, c, d, e, f, g, h, i, j, k, l, m, n, o):
-    # print('\nTesting C5-C9 with values:\nA =', (b + c + e + f), ', B =', b, ', C =', c, ', D =', d, ', E =', e, ', F =', f, ', G =', g, ', H =', h, ', I =', i, ', J =', j, ', M =', m, ', N =', n, '\n')
-    if C10(k, m) and C11(f, i, n, o) and C12(m, n) and C13(b, g, h, i, o) and C14(k, m, o) and C15(b, i, k, l): return True
-    return False
-
 # View H11 in doc: This function returns the required sum for B+C given E and F
-def sumBC(E, F):
+def sumBC(E, F): #note that no new vars are assigned
     return (((E+F+21)**2-417)/E**2-(E+F))  
 
-def cV3():
-    print('using cV3...\n')
+def cV4():
+    print('using cV4...\n')
     global nva
     maxE = 8
     checks = 0
@@ -43,6 +19,7 @@ def cV3():
     solutionsForB = 0
     solutionsForC = 0
     solutions = 0
+    firstSolution = 0
 
     for e in range(maxE, 0, -1):                # rule H9
         nva += 1 #from assigning value to e
@@ -62,32 +39,41 @@ def cV3():
                 # printAll(b, c, e + f + 21, e, f)
                 if (checkConstraintsA(b, c, (e + f + 21), e, f)): solutionsForA += 1
                     
-                for h in range(1, f):# from rule H23
+                for i in range(9, 14): # from rule H24
                     nva += 1
-                    i = int( (f-h)**(1/3) + 11 ) # from rule H23
-                    nva += 1
+
+                    h = f-(i-11)**3 # from rule H25
+
                     if checkConstraintsB(b, c, e+f+21, e, f, 11, h, i, 40):
                         solutionsForB += 1
-                        for k in range(4, 11, 2): # From H30 and H31
+                        #starting with max val for k and looping down reduces nva from 197 to 36
+                        for k in range(10, 3, -2): # From H30 and H31
                             nva += 1
-                            m = (k**2-6)/2 # From H31
-                            nva += 1
-                            o = k**2 -m -10 
-                            nva += 1
-                            n = (m**2 + 291)**(1/2)
-                            nva += 1
+
+                            # couldn't prove a limit of L :(
+                            # I have a therory that L has a limit of 18 but not 100% sure it was a valid proof
                             for l in range(1, 51): 
                                 nva += 1
+
+                                #Note that 
+                                # g = 11, j = 40, d = (e+f+21)
+                                # m = (k**2-6)/2 # From H31
+                                # n = (m**2 + 291)**(1/2) # From rule H33
+                                # o = k**2 -m -10 # From rule H32
+                                # so a solution can be found without ever assigning these values. However, if you feel that this is kinda 'cheaty' then you can uncomment the line below to count for these assignments
+                                # nva += 6 # extra for d, g, j, m, n, and o 
+
                                 checks += 1
-                                if checkConstraintsC(b, c, (e+f+21), e, f, 11, h, i, 40, k, l, m, n, o):
+                                if checkConstraintsC(b, c, (e+f+21), e, f, 11, h, i, 40, k, l, (k**2-6)/2, (((k**2-6)/2)**2 + 291)**(1/2), k**2-((k**2-6)/2) -10):
+                                    if (solutionsForC<1): firstSolution = checks
                                     solutionsForC += 1
-                                    printAllC(b, c, e+f+21, e, f, 11, h, i, 40, k, l, n, m, o)
+                                    printAllC(b, c, (e+f+21), e, f, 11, h, i, 40, k, l, (k**2-6)/2, (((k**2-6)/2)**2 + 291)**(1/2), k**2-((k**2-6)/2) -10)
                                     print('nva =', nva)
 
 
-    # print('\n\nFirst solution found on guess #' + str(firstGuess), 'and with nva =', firstNVA)
     print('\n  ### Extra info from continuing after solution was found ###')
     print('\t Total combinations checked for a solution:', checks)
+    print('\t First solution found on check:', firstSolution)
     print('\t',solutionsForA, 'Solutions satisfied C1-C4')
     print('\t',solutionsForB, 'Solutions satisfied C1-C9')
     print('\t',solutionsForC, 'Solutions satisfied C1-C15')
@@ -105,7 +91,7 @@ def problemB():
 
 def problemC():
     print('Starting Problem c...')
-    cV3()
+    cV4()
 
 def runTest():
     # print(checkConstraintsB(1, 2, 49, 8, 20, 11, 12, 13, 40))
@@ -119,17 +105,21 @@ def runTest():
 print('\n'*50)
 if len(sys.argv) > 1:
     print('Starting test...')
-    if sys.argv[1] == 'aV4': aV4()
-    elif sys.argv[1] == 'aV5': aV5()
-    elif sys.argv[1] == 'aV6': aV6()
+    if sys.argv[1] == 'a3': aV3()
+    elif sys.argv[1] == 'a4': aV4()
+    elif sys.argv[1] == 'a5': aV5()
+    elif sys.argv[1] == 'a6': aV6()
     elif sys.argv[1] == 'a': problemA()
-    elif sys.argv[1] == 'bV1': bV1()
-    elif sys.argv[1] == 'bV2': bV2()
-    elif sys.argv[1] == 'bV3': bV3()
-    elif sys.argv[1] == 'bV4': bV4()
-    elif sys.argv[1] == 'bV5': bV5()
+    elif sys.argv[1] == 'b1': bV1()
+    elif sys.argv[1] == 'b2': bV2()
+    elif sys.argv[1] == 'b3': bV3()
+    elif sys.argv[1] == 'b4': bV4()
+    elif sys.argv[1] == 'b5': bV5()
     elif sys.argv[1] == 'b': problemB()
     elif sys.argv[1] == 'c1': cV1()
+    elif sys.argv[1] == 'c2': cV2()
+    elif sys.argv[1] == 'c3': cV3()
+    elif sys.argv[1] == 'c4': cV4()
     elif sys.argv[1] == 'c': problemC()
     else: runTest()
 else:
@@ -150,11 +140,3 @@ else:
             validInput = True
         else: print('\nInvalid input')
 
-# with open('employee_file.csv', mode='w') as employee_file:
-#     employee_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-
-#     employee_writer.writerow(['John Smith', 'Accounting', 'November'])
-#     employee_writer.writerow(['Erica Meyers', 'IT', 'March'])
-
-# print('Total possible combitnations =', nva)
-# print('Total NVA =', nva, '\n\n')
