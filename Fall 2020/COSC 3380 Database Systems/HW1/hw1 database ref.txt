@@ -1,0 +1,59 @@
+aircraft
+ aircraft_code | character(3)  |           | not null |
+ model         | character(25) |           |          |
+ range         | integer       |           |          |
+
+
+
+airports_data
+ airport_code | character(3) |           | not null |
+ airport_name | jsonb        |           | not null |
+ city         | jsonb        |           | not null |
+ coordinates  | point        |           | not null |
+ timezone     | text         |           | not null |
+
+
+boarding_passes
+ ticket_no   | character(13)        |           | not null |
+ flight_id   | integer              |           | not null |
+ boarding_no | integer              |           | not null |
+ seat_no     | character varying(4) |           | not null |
+
+
+bookings
+ book_ref     | character(6)             |           | not null |
+ book_date    | timestamp with time zone |           | not null |
+ total_amount | numeric(10,2)            |           | not null |
+
+
+flights
+ flight_id           | integer                  |           | not null |
+ flight_no           | character(6)             |           | not null |
+ scheduled_departure | timestamp with time zone |           | not null |
+ scheduled_arrival   | timestamp with time zone |           | not null |
+ departure_airport   | character(3)             |           | not null |
+ arrival_airport     | character(3)             |           | not null |
+ status              | character varying(20)    |           | not null |
+ aircraft_code       | character(3)             |           | not null |
+ actual_departure    | timestamp with time zone |           |          |
+ actual_arrival      | timestamp with time zone |           |          |
+
+seats 
+ aircraft_code   | character(3)          |           | not null |
+ seat_no         | character varying(4)  |           | not null |
+ fare_conditions | character varying(10) |           | not null |
+
+ticket
+ ticket_no      | character(13)         |           | not null |
+ book_ref       | character(6)          |           | not null |
+ passenger_id   | character varying(20) |           | not null |
+ passenger_name | text                  |           | not null |
+ email          | character(50)         |           |          |
+ phone          | character(15)         |           |          |
+
+ticket_flights
+ ticket_no       | character(13)         |           | not null |
+ flight_id       | integer               |           | not null |
+ fare_conditions | character varying(10) |           | not null |
+ amount          | numeric(10,2)         |           | not null |
+

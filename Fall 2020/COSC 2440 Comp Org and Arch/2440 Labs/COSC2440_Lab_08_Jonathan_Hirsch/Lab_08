@@ -1,0 +1,19 @@
+	AREA Lab_08_Jonathan_Hirsch, CODE, READONLY
+	EXPORT __main
+		
+__main	
+	MOV R0, #3; LDR R0, =0x2345ABCD; This is how you assign large value to R0. MOV will NOT work!
+	MOV R1, #0; Number of 1's
+	MOV R2, #0; To iterate through loop
+	MOV R3, #32;
+	
+condition
+	;LSL R0, #1; 
+	;ADC R1, #1; R1 will only increase if a 1 was carried out
+	ADD R2, R2, #1;
+	CMP R2, R3;
+	BLE condition;
+	
+
+stop B stop
+	END
