@@ -62,11 +62,17 @@ int main() {
     //     std::cout << *itr << " ";
 
     string name, num;
-    while (cin >> name >> num) {
-        cout << name << " " << num << endl;
+
+    // while (cin >> name >> num) {
+    //     cout << name << " " << num << endl;
+    // }
+
+    int count = 0;
+    while (cin >> name)
+    {
+        cout << ++count << endl;
     }
-
-
+    
 
 
     return 0;

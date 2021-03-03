@@ -93,6 +93,14 @@ def problemC():
     print('Starting Problem c...')
     cV4()
 
+def runTest():
+    # print(checkConstraintsB(1, 2, 49, 8, 20, 11, 12, 13, 40))
+    for m in range(1, 51):
+        for n in range(1, 51):
+            if C12(m, n): 
+                print(m, n)
+                return
+
 
 print('\n'*50)
 if len(sys.argv) > 1:
