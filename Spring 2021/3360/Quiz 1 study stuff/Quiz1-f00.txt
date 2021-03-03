@@ -1,0 +1,530 @@
+COSC 4330                First Midterm         September 26, 2000
+                         BUFF  VERSION
+
+This exam is closed book.  You can have one page of notes.
+     
+1.   Consider the following program:
+  
+          main(){
+               if (fork() == 0) fork();
+          } // main
+
+     How many processes will it fork?
+
+     (a)  One process.
+ *** (b)  Two processes. (Child and process forked by child)        
+     (c)  Three processes.
+     (d)  Four processes.
+
+2.   What are the advantages of the master/slave organization for
+     multiprocessor operating systems?
+
+     (a)  It requires fewer context switches. (Not True)
+ *** (b)  It requires fewer modifications to the kernel.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+3.   Which of these events can move a process from the running state
+     to the ready state?
+
+     (a)  The arrival in the ready state of a higher-priority process.
+     (b)  A time-out interrupt.
+ *** (c)  Both (a) and (b).
+     (d)  None of the above.
+
+4.   Which of the following statements apply to the round-robin
+     scheduling policy?
+
+     (a)  It can cause starvation. (False since all processes have
+          the same priority
+ *** (b)  It uses the same time slice for all processes.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+5.   What are the main drawbacks of monolithic kernels?
+
+     (a)  They do not support lightweight processes.
+     (b)  They are slower than microkernels.
+     (c)  Both (a) and (b).
+ *** (d)  None of the above. (They are hard to debug and modify.)
+
+6.   Which of the following actions is the normal result of a system
+     call?
+
+ *** (a)  An interrupt occurs.
+     (b)  The calling process is moved to the suspended state.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+7.   Which of the following reasons is the major motivation for
+     suspending processes?
+
+     (a)  To reduce the size of the ready queue.
+     (b)  To reduce the number of context switches.
+     (c)  Both (a) and (b).
+ *** (d)  None of the above. (To make space in main memory.)
+
+8.   In a multiprogramming system, there may be many programs but
+     there is only a single process at any time.
+     (a)  TRUE
+ *** (b)  FALSE (Otherwise the ready queue would always be empty.)
+
+9.   What is the major cause for the lack of success of layered
+     kernels?
+
+     (a)  They increase the number of context switches. (Not true:
+          even though they are many layers, there are all in the
+          kernel)
+ *** (b)  It is very difficult to partition a kernel into
+          hierarchical layers.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+10.  What is the major difference between a real-time system and a
+     time-sharing system?
+
+ *** (a)  Interactive systems do not have to meet hard deadlines.
+     (b)  Real-time systems use non-preemptive scheduling policies.
+          (They use preemptive scheduling with fixed priorities.)
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+11.  Memory protection is normally done through privileged
+     instructions.
+
+     (a)  TRUE
+ *** (b)  FALSE (It is done by the hardware)
+
+12.  What is the major disadvantage of not having privileged
+     instructions?
+
+     (a)  Too many context switches. (Quite the opposite, as 
+          user programs could bypass the kernel.)
+ *** (b)  Unrestricted user access to the data on the hard drive.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+13.  VMS penalizes processes:
+     (a)  That have done too many disk I/O.
+     (b)  That have stayed for too long in the ready queue.
+     (c)  Both (a) and (b).
+ *** (d)  None of the above. (These are the kinds of behaviors that
+          are likely to be rewarded.)
+)
+14.  What is the major advantage of using kernel-supported threads
+     instead of user-level threads?
+     (a)  We will have fewer context switches.
+     (b)  Kernel-supported threads share the address space of their parent.
+ *** (c)  Blocking system calls do not block all threads in the caller's
+          address space.
+     (d)  None of the above.
+
+15.  What is the major advantage of the symmetric approach in
+     operating systems for multiprocessor architectures?
+
+     (a)  It makes the system more secure.
+ *** (b)  It allows the kernel to run on any processor.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+16.  What system call should you use to get the pathname of the home
+     directory of a process?
+
+     (a)  gethome()
+ *** (b)  getenv("HOME") (As you should know from the assignment.)
+     (c)  access()
+     (d)  pwd()
+     (e)  chdir()
+
+Consider the following system V.4 scheduler, to which the four next
+questions will refer:
+
+     #ts_quantum ts_tqexp ts_slpret ts_maxwait ts_lwait LEVEL
+          800        X        1       16000        1    #  0
+          400        0        2        8000        1    #  1
+          200        1        3        4000        Y    #  2
+          100        2        Z        2000        3    #  3
+
+17.  The sole correct value for the variable X is:
+
+**** (a)  0 (A process exceeding its quantum will stay at level
+          0 because there is no lower level.)
+     (b)  1
+     (c)  2
+     (d)  3
+     (e)  4
+
+18.  The sole correct value for the variable Y is:
+
+     (a)  0
+     (b)  1
+     (c)  2
+ *** (d)  3 (We should increase the priority of processes that
+          have waited for too long in the ready queue.)
+     (e)  4
+
+19.  The sole correct value for the variable Z is:
+
+     (a)  0
+     (b)  1
+     (c)  2
+ *** (d)  3 (A process returning from the waiting state should
+          stay at priority level 3 because this is already the
+          highest priority level.)
+     (e)  4
+
+20.  The sleep in ts_slpret refers to:
+
+     (a)  The ready state.
+ *** (b)  The waiting state.
+     (c)  The ready_suspended state.
+     (d)  The waiting_suspended state.
+     (e)  None of the above states.
+
+21.  There are no transitions from the ready_suspended state to the
+     waiting_suspended state.
+
+ *** (a)  TRUE
+     (b)  FALSE
+
+22.  What is the effect of the following program fragment?
+
+          int fd;
+          fd = open("logfile", O_RDWR | OCREAT, 0600);
+          close(2);
+          dup(fd);
+          close(1);
+          dup(fd);
+
+     (a)  stderr is redirected to the file "logfile".
+     (b)  stdout is redirected to the file "logfile".
+ *** (c)  Both (a) and (b).
+     (d)  None of the above.
+
+23.  Memory protection:
+
+ *** (a)  Prevents processes from accessing data located in the
+          address spaces of other processes.
+     (b)  Prevents processes from directly accessing the disk.
+          (No that's what privileged instructions are for.)
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+24.  A process that relinquishes the CPU after it has exhausted its
+     time slice goes to the waiting state.
+
+     (a)  TRUE
+ *** (b)  FALSE (It returns to the ready queue).
+
+25.  Anticipating read requests reduces the number of disk accesses
+     but:
+
+     (a)  May result in lost data if the system suddenly crashes.
+     (b)  Increases the number of context switches.
+     (c)  Both (a) and (b).
+ *** (d)  None of the above. ((a) and (b) apply to delaying
+          writes.)
+ 
+26.  Which default action is performed by a UNIX process when it
+     receives a signal?
+     (a)  The process ignores the signal.
+ *** (b)  The process terminates.
+     (c)  The process handles the signal according to the
+          specifications of its SIGNAL environment variable.
+     (d)  None of the above.
+
+27.  In a vectorized interrupt system, an interrupt can only be
+     interrupted by an interrupt of equal or higher priority.
+     (a)  TRUE
+ *** (b)  FALSE (Only by a higher priority interrupt.)
+
+28.  Why should we reduce the CPU time slice of a round robin policy
+     when the workload increases?
+
+ *** (a)  To keep a reasonable response time for interactive
+          processes.
+     (b)  To reduce the number of context switches. (Opposite effect.)
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+29.  Too many processes in the ready queue is a good indication that:
+
+     (a)  The system may need more memory.
+ *** (b)  The system may need a faster CPU. (CPU is bottleneck.)
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+30.  A system where each user has his or her own workstation but all
+     share the same file server and the same printer is:
+
+ *** (a)  A distributed system.
+     (b)  A multiprocessor system.
+     (c)  A parallel system.
+     (d)  A time-sharing system.
+
+____________________________________________________________________
+
+COSC 4330                First Midterm         September 26, 2000
+                         WHITE VERSION
+
+This exam is closed book.  You can have one page of notes.
+     
+1.   Consider the following program:
+
+          main(){
+               if (fork() == 0) fork(); fork();
+          } // main
+
+     How many processes will it fork?
+
+     (a)  One process.
+     (b)  Two processes.
+     (c)  Three processes.
+ *** (d)  Four or more processes. (OOPS! The corrct answer is five)
+
+2.   Which of these events can move a process from the running state
+     to the ready state?
+
+     (a)  The arrival in the ready state of a higher-priority process.
+     (b)  A time-out interrupt.
+ *** (c)  Both (a) and (b).
+     (d)  None of the above.
+
+3.   Which of the following statements apply to the round-robin
+     scheduling policy?
+
+     (a)  It can cause starvation. (False since all processes have
+          the same priority.)
+ *** (b)  It uses the same time slice for all processes.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+4.   What are the main drawbacks of monolithic kernels?
+
+     (a)  They are slower than microkernels.
+     (b)  They do not support lightweight processes.
+     (c)  Both (a) and (b).
+ *** (d)  None of the above. (They are hard to debug and modify.)
+
+5.   Which of the following actions is the normal result of a system
+     call?
+
+ *** (a)  An interrupt occurs.
+     (b)  The calling process is moved to the suspended state.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+6.   Which of the following reasons is the major motivation for
+     suspending processes?
+
+     (a)  To reduce the size of the ready queue.
+     (b)  To reduce the number of context switches.
+     (c)  Both (a) and (b).
+ *** (d)  None of the above. (To make space in main memory.)
+
+7.   What is the major cause for the lack of success of layered
+     kernels?
+
+     (a)  They increase the number of context switches. (Not true:
+          even though they are many layers, there are all in the
+          kernel.)
+ *** (b)  It is very difficult to partition a kernel into hierarchical
+          layers.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+8.   Memory protection is normally done through privileged
+     instructions.
+
+     (a)  TRUE
+ *** (b)  FALSE  (It is done by the hardware.)
+
+9.   What are the advantages of the master/slave organization for
+     multiprocessor operating systems?
+
+ *** (a)  It requires fewer modifications to the kernel.
+     (b)  It requires fewer context switches.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+10.  What is the major difference between a real-time system and a
+     time-sharing system?
+
+     (a)  Real-time systems use non-preemptive scheduling policies.
+          (They use preemptive scheduling with fixed priorities.)
+ *** (b)  Interactive systems do not have to meet hard deadlines.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+11.  In a multiprogramming system, there may be many programs but
+     there is only a single process at any time.
+
+     (a)  TRUE
+ *** (b)  FALSE (Otherwise the ready queue would always be empty.)
+
+12.  VMS penalizes processes:
+
+     (a)  That have done too many disk I/O.
+     (b)  That have stayed for too long in the ready queue.
+     (c)  Both (a) and (b).
+ *** (d)  None of the above. (These are the kinds of behaviors that
+          are likely to be rewarded.)
+
+13.  What is the major advantage of using kernel-supported threads
+     instead of user-level threads?
+
+     (a)  Kernel-supported threads share the address space of their parent.
+ *** (b)  Blocking system calls do not block all threads in the caller's
+          address space.
+     (c)  It will educe the number of context switches.
+     (d)  None of the above.
+
+14.  What is the major advantage of the symmetric approach in
+     operating systems for multiprocessor architectures?
+
+ *** (a)  It allows the kernel to run on any processor.
+     (b)  It makes the system more secure.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+15.  Too many processes in the ready queue is a good indication that:
+
+***  (a)  The system may need a faster CPU.
+     (b)  The system may need more memory.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+16.  What system call should you use to get the pathname of the home
+     directory of a process?
+
+     (a)  access()
+     (b)  gethome()
+ *** (c)  getenv("HOME") (As you should know from the assignment.)
+     (d)  pwd()
+     (e)  chdir()
+
+Consider the following system V.4 scheduler, to which the four next
+questions will refer:
+
+     #ts_quantum ts_tqexp ts_slpret ts_maxwait ts_lwait LEVEL
+         1000        X        1       20000        1    #  0
+          500        0        2       10000        1    #  1
+          200        1        3        5000        Z    #  2
+          100        2        Y        2000        3    #  3
+
+17.  The sole correct value for the variable X is:
+
+ *** (a)  0  (Should lower priority but cannot go lower than 0.)
+     (b)  1
+     (c)  2
+     (d)  3
+     (e)  4
+
+18.  The sole correct value for the variable Y is:
+
+     (a)  0
+     (b)  1
+     (c)  2
+***  (d)  3 (Should increase priority but cannot go higher than
+          3.)
+     (e)  4
+
+19.  The sole correct value for the variable Z is:
+
+     (a)  0
+     (b)  1
+     (c)  2
+ *** (d)  3 (Should increase priority.)
+     (e)  4
+
+20.  The sleep in ts_slpret refers to:
+
+     (a)  The ready_suspended state.
+     (b)  The waiting_suspended state.
+     (c)  The ready state.
+ *** (d)  The waiting state.
+     (e)  None of the above states.
+
+21.  There are no transitions from the ready_suspended state to the
+     waiting_suspended state.
+
+ *** (a)  TRUE
+     (b)  FALSE
+
+22.  What is the effect of the following program fragment?
+
+          int fd;
+          fd = open("logfile", O_RDWR | OCREAT, 0600);
+          close(1);
+          dup(fd);
+          close(2);
+          dup(fd);
+ 
+     (a)  stdout is redirected to the file "logfile".
+     (b)  stderr is redirected to the file "logfile".
+ *** (c)  Both (a) and (b).
+     (d)  None of the above.
+
+23.  What is the major disadvantage of not having privileged
+     instructions?
+
+ *** (a)  Unrestricted user access to the data on the hard drive.
+     (b)  Too many context switches. (Quite the opposite, as 
+          user programs could bypass the kernel.)
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+24.  Anticipating read requests reduces the number of disk accesses
+     but:
+
+     (a)  May result in lost data if the system suddenly crashes.
+     (b)  Increases the number of context switches.
+     (c)  Both (a) and (b).
+ *** (d)  None of the above. (These are disadvantages of delaying
+          writes.)
+
+25.  Memory protection:
+
+ *** (a)  Prevents processes from accessing data located in the address
+          spaces of other processes.
+     (b)  Prevents processes from directly accessing the disk.
+          (No that's what privileged instructions are for.)
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+26.  A process that relinquishes the CPU after it has exhausted its
+     time slice goes to the waiting state.
+
+     (a)  TRUE
+ *** (b)  FALSE (It returns to the ready queue.)
+
+27.  Which default action is performed by a UNIX process when it
+     receives a signal?
+
+     (a)  The process ignores the signal.
+ *** (b)  The process terminates.
+     (c)  The process handles the signal according to the specifications of
+          its SIGNAL environment variable.
+     (d)  None of the above.
+
+28.  Why should we reduce the CPU time slice of a round robin policy
+     when the workload increases?
+
+     (a)  To reduce the number of context switches. (Opposite effect.)
+ *** (b)  To keep a reasonable response time for interactive processes.
+     (c)  Both (a) and (b).
+     (d)  None of the above.
+
+29.  A system where each user has his or her own workstation but all
+     share the same file server and the same printer is:
+
+ *** (a)  A distributed system.
+     (b)  A parallel system.
+     (c)  A time-sharing system.
+     (d)  A multiprocessor system.
+
+30.  In a vectorized interrupt system, an interrupt can only be
+     interrupted by an interrupt of higher priority.
+
+ *** (a)  TRUE
+     (b)  FALSE

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Starting Lineup</title>
+
+<body>
+   <h1>Starting Lineup</h1>
+   <form action="https://wp.zybooks.com/form-viewer.php" method="POST">
+      <p>Status:
+         <input id="Draft" name="status" type="radio" value="Draft">
+         <label for="Draft">Draft</label>
+
+         <input id="Final" name="status" type="radio" value="Final" checked>
+         <label for="Final">Final</label>
+      </p>
+      <p>
+         <label for="gameDate">Date:</label>
+         <select name="gameDate" id="gameDate">
+            <option>March 20</option>
+            <option>March 24</option>
+            <option>April 2</option>            
+            <option>April 6</option>
+            <option>April 13</option>
+         </select>
+      </p>
+      <p>Players:
+         <p>
+            <input type="checkbox" id="Agarwal" name="player" value="Aarav Agarwal">
+            <label for="Agarwal">Aarav Agarwal</label>
+         </p>
+         <p>   
+            <input type="checkbox" id="Johnson" name="player" value="Ava Johnson">         
+            <label for="Johnson">Ava Johnson</label>
+         </p>
+         <p>
+            <input type="checkbox" id="Ortiz" name="player" value="Julio Ortiz">
+            <label for="Ortiz">Julio Ortiz</label>
+         </p>
+         <p>
+            <input type="checkbox" id="Rubio" name="player" value="Liam Rubio">
+            <label for="Rubio">Liam Rubio</label>
+         </p>
+         <p>
+            <input type="checkbox" id="Witherspoon" name="player" value="Emma Witherspoon">
+            <label for="Witherspoon">Emma Witherspoon</label>
+         </p>
+      </p>
+      <input type="submit" value="Submit">
+   </form>
+</body>
+
+</html>
