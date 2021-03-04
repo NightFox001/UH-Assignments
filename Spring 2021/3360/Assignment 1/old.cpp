@@ -36,42 +36,43 @@
 #include <list> 
 using namespace std;
 
+
+
+void changeArr(int *arr, int size) {       
+    double avg;          
+
+    for (int i = 0; i < size; ++i) {
+        arr[i] = i;
+    }
+
+}
+
+
+void middleMan(int *arr, int size) {
+    changeArr(arr, size);
+}
+
+
 int main() {
 
 
     // list<int> requestTimes;
-    // const int size = 5;
-    // int nums [size] = { 10, 20, 30, 40, 50 };
+    const int size = 5;
+    int nums [size] = { 10, 20, 30, 40, 50 };
 
-    // for (int i = 0; i < size; i++) {
-    //     requestTimes.push_back(nums[i]);
-    // }
+    // changeArr(nums, size);
+    middleMan(nums, size);
+
+    for (int i = 0; i < size; ++i) {
+        cout << nums[i] << endl;
+    }
+
     
-    // list<int>::iterator itr;
-    // for(itr = requestTimes.begin(); itr != requestTimes.end(); ++itr)
-    //     std::cout << *itr << " ";
 
-    // int newNum = 25;
-    // for(itr = requestTimes.begin(); itr != requestTimes.end(); ++itr)
-    //     if ( *itr > newNum) {
-    //         requestTimes.insert(itr, newNum);
-    //         break;
-    //     }
-
-    // for(itr = requestTimes.begin(); itr != requestTimes.end(); ++itr)
-    //     std::cout << *itr << " ";
 
     string name, num;
 
-    // while (cin >> name >> num) {
-    //     cout << name << " " << num << endl;
-    // }
 
-    int count = 0;
-    while (cin >> name)
-    {
-        cout << ++count << endl;
-    }
 
     return 0;
 }

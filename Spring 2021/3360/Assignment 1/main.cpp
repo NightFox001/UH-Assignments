@@ -3,6 +3,8 @@
 #include <string>
 #include <list> 
 #include <vector> 
+#include <queue> 
+
 using namespace std;
 
 
@@ -25,6 +27,12 @@ class Job {
             }
         }
 
+        string getRequest() {
+            list<string>::iterator iter = this->jobRequests.begin();
+            string request = *iter;
+            return request;
+        }
+
         // return and remove next job request
         string popRequest() {
             list<string>::iterator iter = this->jobRequests.begin();
@@ -43,8 +51,14 @@ class Job {
 
 struct Event {
         // event list holds time that it will complete at. start time + time needed
-        int completionTime, jobId;
+        int completionTime;
         string requestName; // core, disk, spooler
+        int jobId;
+        Event(int completionTime, string requestName, int jobId) {
+            this->completionTime = completionTime;
+            this->requestName = requestName;
+            this->jobId = jobId;
+        }
 };
 
 struct Device {
@@ -52,39 +66,73 @@ struct Device {
     int busyCount = 0;
 };
 
-void coreRequest(int duration, int jobID, Device core, int& currTime){
+//slide 25
+void printJobStart(int jobId, int currentTime, vector<int> jobTable, vector<Job*> inputTable) {
+    cout << "Job " << jobId << " starts at time " << currentTime << " ms\n";
+    cout << "Job Table:\n";
+    //check if there is a job in the table
+    if (jobTable.size() == 0) {
+        cout << "There are no other active jobs\n";
+    }
+    else {
+        for (auto itr = jobTable.begin(); itr != jobTable.end(); itr++) {
+            cout << "Job " << inputTable[jobTable[*itr]]->jobId << " is " << inputTable[jobTable[*itr]]->state << endl;
+        }
+    }
+    cout << "\n\n";
+}
+
+void coreRequest(int duration, Device& core, int jobID, int& currentTime, list<Event*> eventList){
+    cout << "1 core is: " << core.status << endl;
     if (core.status == "FREE") {
         core.status = "BUSY";
         // schedule CORE completion at currentTime + requestedTime for job jobID;
         // aka create event
+        int completionTime = currentTime + duration;
+        // Event* event = new Event(completionTime, "CORE", jobID);
+        // eventList.p
     }
     else {
     // queue jobID in readyQueue
 
     }
+    cout << "2 core is: " << core.status << endl;
 } 
 
-void fetchJobs(vector<Job*> inputTable, int& jobsProccessing, int& MPL, int& nextJob, int&jobsInTable) {
+// void core_release (jobID) { 
+//     if (readyQueue is not empty) {
+//         // pop first core request in readyQueue
+//         // schedule its completion at current_time + how_long
+//     } else {
+//         // core = FREE 
+//     }
+//     // process next job request for job jobID
+// }
+
+void fetchJobs(vector<Job*> inputTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Device &core, int &currentTime, vector<int> jobTable, list<Event*> eventList) {
     while ((jobsProccessing < MPL)&&(nextJob < jobsInTable)) {
 
         jobsProccessing++;
         int seqno = nextJob;
         nextJob++;
         // pop first job step from job seqno
-        string request = inputTable[seqno]->popRequest();
         int duration = inputTable[seqno]->popDuration();
-
+        string request = inputTable[seqno]->popRequest();
+        int jobId = inputTable[seqno]->jobId;
         if (request == "CORE") {
             // process core request for job jobID[seqno]
             // tell processor that this job needs the core and for how long
             // if processor is busy, get in line to tell it your request
-            printf("DONT PANIC: FIRST STEP IS A CORE REQUEST\n");
+            printJobStart(jobId, currentTime, jobTable, inputTable);
+            coreRequest(duration, core, jobId, currentTime, eventList);
+            jobTable.push_back(seqno);
         }
         else
             printf("PANIC: FIRST STEP IS NOT A CORE REQUEST");
     }
 }
 
+// FIXME pls
 void terminateJob() {
     // jobsProccessing -- ;
 }
@@ -127,15 +175,12 @@ int main(int argc, char *argv[]) {
     int MPL, duration, jobsInTable = 0, nextJob = 0, currentTime = 0, loopCount = 0;
     vector<Job*> inputTable;  
     Job* jobPtr = NULL;
-    list<Event> eventList;
+    list<Event*> eventList;
     Event* event;
-    list<int> readyQ;
-    list<int> diskQ;
-    list<int> spoolQ;
-    Device core;
-    Device disk;
-    Device spooler;
-
+    queue<int> readyQ, diskQ, spoolQ;
+    Device core, disk, spooler;
+    // dynamic array of jobs loaded in RAM, num of elements = nextJob
+    vector<int> jobTable;
 
     // file = getFile(argc, argv);
     file.open("input10.txt");
@@ -148,7 +193,7 @@ int main(int argc, char *argv[]) {
         cout << "\nFile opened. Beginning to read from file.\n\n";
         // first line contains MPL
         file >> request >> MPL;
-        // Get all inputTable from file
+
         while (file >> request >> duration) {
             // Create a new Job object
             if (request == "JOB") {
@@ -169,10 +214,15 @@ int main(int argc, char *argv[]) {
         // MPL = 2;
         cout << "Done reading file.\nMPL: " << MPL << "\n \n";
 
-
         int jobsProccessing = 0;
         // if (jobsProccessing < MPL) and jobs there are still jobs ready to be fetched
-        // fetchJobs()
+        // MPL = 2;
+        // cout << "before fetch core is: " << core.status << endl;
+        cout << "\nbefore fetch first job req: " << inputTable[0]->getRequest() << "\n\n";
+        fetchJobs(inputTable, jobsProccessing, MPL, nextJob, jobsInTable, core, currentTime, jobTable, eventList);
+
+        // cout << "after fetch core is: " << core.status << endl;
+        cout << "\nafter fetch first job req: " << inputTable[0]->getRequest() << "\n\n";
 
 
             // starting a job will always be a core request
@@ -192,9 +242,10 @@ int main(int argc, char *argv[]) {
     } // after reading. end of program
   
     for (int i = 0; i < jobsInTable; ++i){
-        cout << "deleting 'job " << inputTable[i]->jobId << "' at index " << i << endl;
+        // cout << "deleting 'job " << inputTable[i]->jobId << "' at index " << i << endl;
         delete inputTable[i];
     }
+
 
     // print simulation results
    
