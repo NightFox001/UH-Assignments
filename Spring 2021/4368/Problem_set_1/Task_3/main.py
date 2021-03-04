@@ -26,19 +26,19 @@ def cV4():
         for f in range(29-e, 0, -1):            # rule H13
             nva += 1 #from assigning value to f
 
-            # Don't don't assign d, b, or c orvalues if rules H13 or H11 are broken
+            # Don't don't assign d, b, or c values if rules H13 or H11 are broken
             if (not sumBC(e, f)%1==0 or sumBC(e, f)>(49-e-f)): continue
 
-            # Check that the required sum of (B+C) defined by H11  
+            # Check that the required sum of (B+C) defined by H11. (e + f + 21) is in place of D
             if not (checkConstraintsA2(sumBC(e, f), (e + f + 21), e, f)): continue
             for c in range(2, 5):          # From rule H16
                 nva += 1 #from assigning value to b
                 b = int(sumBC(e, f))-c    # From rule H1
                 nva += 1 #from assigning value to c
         
-                # printAll(b, c, e + f + 21, e, f)
-                if (checkConstraintsA(b, c, (e + f + 21), e, f)): solutionsForA += 1
-                    
+                # If the current values dont satisfy constraits for A then they won't pass B or C so stop
+                if ( not checkConstraintsA(b, c, (e + f + 21), e, f)): continue
+                solutionsForA += 1
                 for i in range(9, 14): # from rule H24
                     nva += 1
 
@@ -50,8 +50,8 @@ def cV4():
                         for k in range(10, 3, -2): # From H30 and H31
                             nva += 1
 
-                            # couldn't prove a limit of L :(
-                            # I have a therory that L has a limit of 18 but not 100% sure it was a valid proof
+                            # couldn't prove a limit of L :(i
+                            # I have a therory that L has a limt of 18 but not 100% sure it was a valid proof
                             for l in range(1, 51): 
                                 nva += 1
 

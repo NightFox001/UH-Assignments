@@ -1,0 +1,10 @@
+
+
+
+currentTime = 0
+
+Fetch a job 
+
+if requestName is for "foo"
+    send foo request
+currentTime += requestTime

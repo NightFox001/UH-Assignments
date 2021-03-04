@@ -2,52 +2,98 @@
 #include <fstream>
 #include <string>
 #include <list> 
+#include <vector> 
 using namespace std;
 
 
 class Job {
     public:
         int SeqNum;
-        int jobNum;
-        list<string> requestNames;
-        list<int> requestTimes;
+        int jobId;
+        string state = "ready";
+        list<string> jobRequests;
+        list<int> jobDurations;
         void setId(int Id) {SeqNum = Id;}
         // void setRequest(string req) {request = req;}
         
-        void printNames() {
-            list<string>::iterator iter = this->requestNames.begin();
-            while(iter != this->requestNames.end())
+        void printRequests() {
+            list<string>::iterator iter = this->jobRequests.begin();
+            while(iter != this->jobRequests.end())
             {
-                cout << "Name " << *iter << endl;
+                cout << "Request " << *iter << endl;
                 ++iter;
             }
         }
+
+        // return and remove next job request
+        string popRequest() {
+            list<string>::iterator iter = this->jobRequests.begin();
+            string request = *iter;
+            this->jobRequests.pop_front();
+            return request;
+        }
+        // return and remove next job duration
+        int popDuration() {
+            list<int>::iterator iter = this->jobDurations.begin();
+            int time = *iter;
+            this->jobDurations.pop_front();
+            return time;
+        }
 };
 
-class Event {
-    public:
+struct Event {
+        // event list holds time that it will complete at. start time + time needed
         int completionTime, jobId;
         string requestName; // core, disk, spooler
-
-
 };
 
-void printJobStates(string table){
-    // print stuff
+struct Device {
+    string status = "FREE";
+    int busyCount = 0;
+};
+
+void coreRequest(int duration, int jobID, Device core, int& currTime){
+    if (core.status == "FREE") {
+        core.status = "BUSY";
+        // schedule CORE completion at currentTime + requestedTime for job jobID;
+        // aka create event
+    }
+    else {
+    // queue jobID in readyQueue
+
+    }
+} 
+
+void fetchJobs(vector<Job*> inputTable, int& jobsProccessing, int& MPL, int& nextJob, int&jobsInTable) {
+    while ((jobsProccessing < MPL)&&(nextJob < jobsInTable)) {
+
+        jobsProccessing++;
+        int seqno = nextJob;
+        nextJob++;
+        // pop first job step from job seqno
+        string request = inputTable[seqno]->popRequest();
+        int duration = inputTable[seqno]->popDuration();
+
+        if (request == "CORE") {
+            // process core request for job jobID[seqno]
+            // tell processor that this job needs the core and for how long
+            // if processor is busy, get in line to tell it your request
+            printf("DONT PANIC: FIRST STEP IS A CORE REQUEST\n");
+        }
+        else
+            printf("PANIC: FIRST STEP IS NOT A CORE REQUEST");
+    }
 }
 
-void printSnapShot(int time, int jobId, string action) {
-    // do stuff
-    // print table 
+void terminateJob() {
+    // jobsProccessing -- ;
 }
-
-// event list holds time that it will complete at. start time + time needed
-
 
 fstream getFile(int argc, char *argv[]) {
-    cout << argc << endl;
+
     string fileName;
     fstream file;
+
     if (argc > 1) {
         fileName = argv[2];
             cout << "\n\n\nAttempting to open file '" << fileName << "'\n\n";
@@ -74,83 +120,88 @@ fstream getFile(int argc, char *argv[]) {
     return file; 
 }
 
-int main(int argc, char *argv[]) {
-
-    
+int main(int argc, char *argv[]) {  
+    cout << "\n\n\n\n\n\n\n\n\n";
     fstream file;
+    string fileName, keyword, argument, request; 
+    int MPL, duration, jobsInTable = 0, nextJob = 0, currentTime = 0, loopCount = 0;
+    vector<Job*> inputTable;  
+    Job* jobPtr = NULL;
+    list<Event> eventList;
+    Event* event;
+    list<int> readyQ;
+    list<int> diskQ;
+    list<int> spoolQ;
+    Device core;
+    Device disk;
+    Device spooler;
 
 
-    file = getFile(argc, argv);
-    if (!file.is_open()) { // user chose to exit before entering valid file name
+    // file = getFile(argc, argv);
+    file.open("input10.txt");
+    if (!file.is_open()) { // user chose to exit before entering valid file request
         cout << "\n\n\nExiting... Goodbye!\n\n";
         return 0;
-    } else { 
+    } 
+    // 
+    else { 
         cout << "\nFile opened. Beginning to read from file.\n\n";
-
-        string fileName, keyword, argument, name; 
-        int MPL, num, jobsAdded = 0, jobsCompleted = 0, currentTime = 0, loopCount = 0;
-        list<Job*> jobs;
-        Job* jobPtr = NULL;
-
         // first line contains MPL
-        file >> name >> MPL;
-
-        // Get all jobs from file
-        while (file >> name >> num) {
-            // cout << name << " " << num << endl;
-
+        file >> request >> MPL;
+        // Get all inputTable from file
+        while (file >> request >> duration) {
             // Create a new Job object
-            if (name == "JOB") {
+            if (request == "JOB") {
                 jobPtr = new Job;
-                jobPtr->jobNum = num;
-                jobPtr->SeqNum = jobsAdded;
-                jobs.push_back(jobPtr);
-                jobsAdded++;
+                jobPtr->jobId = duration;
+                jobPtr->SeqNum = jobsInTable;
+                inputTable.push_back(jobPtr);
+                jobsInTable++;
                     continue;
-
             // Add requests for the last Job created
-            } else { 
-                jobPtr->requestNames.push_back(name);
-                jobPtr->requestTimes.push_back(num);
+            } 
+            else { 
+                jobPtr->jobRequests.push_back(request);
+                jobPtr->jobDurations.push_back(duration);
             }
 
         } // while
-        cout << "Done reading file.";
+        // MPL = 2;
+        cout << "Done reading file.\nMPL: " << MPL << "\n \n";
 
-        // start first MPL jobs
-        while (jobsCompleted < jobsAdded and loopCount < 10000) {
-            loopCount++; // avoid infinite loops
 
-            // if jobs in ram < MPL { fetch new jobPtr }
+        int jobsProccessing = 0;
+        // if (jobsProccessing < MPL) and jobs there are still jobs ready to be fetched
+        // fetchJobs()
+
+
             // starting a job will always be a core request
+            // Event event;
+            // event.completionTime = (*itr)->popDuration();
+            // event.requestName = (*itr)->popRequest();
+            // event.jobId = (*itr)->jobId;
+         
+            // eventList.push_back(event);
+            // Event tempEvent;
+            // while (eventList.size() > 0) {
+            //     eventList.pop_front();
+            //     // remove event with smallest completion time
 
-        }
 
-        cout << "\nloop count: " << loopCount << endl;
-
-        list<Job*>::iterator it2;
-        for (it2 = jobs.begin(); it2 != jobs.end(); ++it2){
-            delete (*it2);
-        }
 
     } // after reading. end of program
   
-    // while (event list is not empty) {
-        // process next event in list
-
-    // } 
+    for (int i = 0; i < jobsInTable; ++i){
+        cout << "deleting 'job " << inputTable[i]->jobId << "' at index " << i << endl;
+        delete inputTable[i];
+    }
 
     // print simulation results
    
-// jobs have id and resouce
+// inputTable have id and resouce
 // resouce has request of CORE,DISK,and PRINT
 
-    // list<Job*>::iterator it;
-    // for (it = jobs.begin(); it != jobs.end(); ++it){
-    //     cout << "Job " << (*it)->SeqNum << endl;    
-    //     (*it)->printNames();    
 
-    // }
 
 
     if (file.is_open()) { file.close(); }
