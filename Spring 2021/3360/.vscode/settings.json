@@ -10,6 +10,7 @@
         "string": "cpp",
         "vector": "cpp",
         "iostream": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "istream": "cpp"
     }
 }
