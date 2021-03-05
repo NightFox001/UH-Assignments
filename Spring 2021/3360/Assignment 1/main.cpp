@@ -131,7 +131,7 @@ void printJobStart(int jobId, int currentTime, vector<int> jobTable, vector<Job*
 
 
 void coreRequest(Job *job, Device &core, int& currentTime, EventList &eventList, queue<Job*> *readyQ){
-    cout << "requesting core: " << core.status << endl;
+    cout << "Job " << job->jobId << " requesting core: " << core.status << endl;
     if (core.status == "FREE") {
         core.status = "BUSY";
         job->state = "RUNNING";
@@ -145,14 +145,16 @@ void coreRequest(Job *job, Device &core, int& currentTime, EventList &eventList,
     else {
     // queue jobID in readyQueue
         job->state = "READY";
+        cout << "Job " << job->jobId << " added to ready queue\n";
         readyQ->push(job);
     }
     // cout << "2 core is: " << core.status << endl;
 } 
 
+
 // disk request
-void diskRequest(Job *job, Device &core, Device &disk, int& currentTime, EventList &eventList, queue<Job*> *readyQ, queue<Job*> *diskQ) {
-    cout << "requesting disk: " << disk.status << endl;
+void diskRequest(Job *job, Device &core, Device &disk, Device &spooler, int& currentTime, EventList &eventList, queue<Job*> *readyQ, queue<Job*> *diskQ) {
+    cout << "Job " << job->jobId << " requesting disk: " << disk.status << endl;
     job->state = "BLOCKED: at Disk";
     if (job->getDuration() == 0) {
         // perform next job request #should always be for core
@@ -163,12 +165,14 @@ void diskRequest(Job *job, Device &core, Device &disk, int& currentTime, EventLi
         disk.status = "BUSY";
         Event* event = new Event( currentTime+job->popDuration(), job->popRequest(), job);
     } else {
+        cout << "Job " << job->jobId << " added to disk queue\n";
         diskQ->push(job);
     } 
 } 
 
+
 void spoolerRequest(Job *job, Device &core, Device &spooler, int& currentTime, EventList &eventList, queue<Job*> *readyQ, queue<Job*> *spoolerQ) {
-    cout << "requesting spooler: " << spooler.status << endl;
+    cout << "Job " << job->jobId << " requesting spooler: " << spooler.status << endl;
     job->state = "BLOCKED: at Spooler";
     if (job->getDuration() == 0) {
         // perform next job request #should always be for core
@@ -179,48 +183,83 @@ void spoolerRequest(Job *job, Device &core, Device &spooler, int& currentTime, E
         spooler.status = "BUSY";
         Event* event = new Event( currentTime+job->popDuration(), job->popRequest(), job);
     } else {
+        cout << "Job " << job->jobId << " added to spooler queue\n";
         spoolerQ->push(job);
     } 
 } 
 
 
-void coreRelease (Job* job, Device &core, Device &disk, Device &spool, int currentTime, EventList &eventList, queue<Job*> *readyQ, queue<Job*> *diskQ) { 
-    cout << "releasing core\n";
-    if (readyQ->size() == 0) {
-        core.status = "FREE"; 
-    } else {
-        // pop first core request in readyQueue
-        Job* nextJob = readyQ->front();
-        // schedule its completion at current_time + how_long
-        Event* event = new Event( currentTime+nextJob->popDuration(), nextJob->popRequest(), nextJob);
-        eventList.add(event);
+void proccessNextRequest(Job* job, Device &core, Device &disk, Device &spooler, int &currentTime, EventList &eventList, queue<Job*> *readyQ, queue<Job*> *diskQ, queue<Job*> *spoolerQ) {
+    if (job->getRequest() == "CORE") {
+        coreRequest(job, core, currentTime, eventList, readyQ);
     }
-    // process next job request for job jobID
-    if (job->getRequest() == "DISK") {
-        diskRequest(job, core, disk, currentTime, eventList, readyQ, diskQ);
+    else if (job->getRequest() == "DISK") {
+        diskRequest(job, core, disk, spooler, currentTime, eventList, readyQ, diskQ);
     }
     else if (job->getRequest() == "PRINT") {
-    // spoolRequest
-    }
-    else if (job->getRequest() == "CORE") {
-        coreRequest(job, core, currentTime, eventList, readyQ);
+    spoolerRequest(job, core, spooler, currentTime, eventList, readyQ, spoolerQ);
     }
     else {
         cout << "\n\nSomething went wrong! could not get next request for job at coreRelease. Job request: " << job->getRequest() << "\n\n";
     }
 }
 
-void fetchJobs(vector<Job*> inputTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Device &core, int &currentTime, vector<int> jobTable, EventList &eventList, queue<Job*> 
 
-*readyQ) {
+void coreRelease (Job* job, Device &core, Device &disk, Device &spooler, int &currentTime, EventList &eventList, queue<Job*> *readyQ, queue<Job*> *diskQ, queue<Job*> *spoolerQ) { 
+    cout << "Job " << job->jobId << " releasing core\n";
+    if (readyQ->size() == 0) {
+        core.status = "FREE"; 
+    } else {
+        // pop first core request in readyQueue
+        Job* nextJob = readyQ->front();
+        cout << "Job " << nextJob->jobId << " removed from ready queue\n";
+        // schedule its completion at current_time + how_long
+        Event* event = new Event( currentTime+nextJob->popDuration(), nextJob->popRequest(), nextJob);
+        eventList.add(event);
+    }
+    // process next job request for job jobID
+    proccessNextRequest(job, core, disk, spooler, currentTime, eventList,readyQ, diskQ, spoolerQ);
+}
+
+void diskRelease(Job* job, Device &core, Device &disk, Device &spooler, Device &spool, int &currentTime, EventList &eventList, queue<Job*> *readyQ, queue<Job*> *diskQ, queue<Job*> *spoolerQ) { 
+    cout << "Job " << job->jobId << " releasing disk\n";
+    if (diskQ->size() == 0) {
+        disk.status = "FREE"; 
+    } else {
+        // pop first disk request in diskQueue
+        Job* nextJob = diskQ->front();
+        cout << "Job " << nextJob->jobId << " removed from disk queue\n";
+        Event* event = new Event( currentTime+nextJob->popDuration(), nextJob->popRequest(), nextJob);
+        eventList.add(event);
+    }
+    // process next job request for job jobID
+    proccessNextRequest(job, core, disk, spooler, currentTime, eventList,readyQ, diskQ, spoolerQ);
+}
+
+
+void spoolerRelease(Job* job, Device &core, Device &disk, Device &spooler, Device &spool, int &currentTime, EventList &eventList, queue<Job*> *readyQ, queue<Job*> *diskQ, queue<Job*> *spoolerQ) { 
+    cout << "Job " << job->jobId << " releasing spooler\n";
+    if (spoolerQ->size() == 0) {
+        spooler.status = "FREE"; 
+    } else {
+        // pop first spooler request in diskQueue
+        Job* nextJob = spoolerQ->front();
+        cout << "Job " << nextJob->jobId << " removed from spooler queue\n";
+        Event* event = new Event( currentTime+nextJob->popDuration(), nextJob->popRequest(), nextJob);
+        eventList.add(event);
+    }
+    // process next job request for job jobID
+    proccessNextRequest(job, core, disk, spooler, currentTime, eventList,readyQ, diskQ, spoolerQ);
+}
+
+
+
+void fetchJobs(vector<Job*> inputTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Device &core, int &currentTime, vector<int> jobTable, EventList &eventList, queue<Job*> *readyQ) {
 
     while ((jobsProccessing < MPL)&&(nextJob < jobsInTable)) {
-
         jobsProccessing++;
         int seqno = nextJob;
         nextJob++;
-        // pop first job step from job seqno
-        
         string request = inputTable[seqno]->getRequest();
         if (request == "CORE") {
             // process core request for job jobID[seqno]
@@ -233,8 +272,9 @@ void fetchJobs(vector<Job*> inputTable, int &jobsProccessing, int &MPL, int &nex
         else
             printf("PANIC: FIRST STEP IS NOT A CORE REQUEST");
     }
-
 }
+
+
 
 // FIXME pls
 void terminateJob() {
@@ -281,7 +321,7 @@ int main(int argc, char *argv[]) {
     Job* job = NULL;
     EventList eventList;
     Event* event;
-    queue<Job*> readyQ, diskQ, spoolQ;
+    queue<Job*> readyQ, diskQ, spoolerQ;
     Device core, disk, spooler;
     // dynamic array of jobs loaded in RAM, num of elements = nextJob
     vector<int> jobTable;
@@ -330,7 +370,7 @@ int main(int argc, char *argv[]) {
             job = event->job;
 
             if (event->requestName == "CORE") {
-                coreRelease(job, core, disk, spooler, currentTime, eventList, &readyQ, &diskQ);
+                coreRelease(job, core, disk, spooler, currentTime, eventList, &readyQ, &diskQ, &spoolerQ);
                 }
         }
 
