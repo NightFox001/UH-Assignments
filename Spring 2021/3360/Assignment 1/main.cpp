@@ -310,7 +310,7 @@ void proccessNextRequest(Job *job, Device &core, Device &disk, Device &spooler, 
     }
 }
 
-void coreRelease(vector<Job *> inputTable, vector<int> &jobTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Job *job, Device &core, Device &disk, Device &spooler, int &currentTime, EventList &eventList, queue<Job *> *readyQ, queue<Job *> *diskQ, queue<Job *> *spoolerQ)
+void coreRelease(vector<Job *> inputTable, vector<int> &jobTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Job *job, Device &core, Device &disk, int &diskCount, Device &spooler, int &currentTime, EventList &eventList, queue<Job *> *readyQ, queue<Job *> *diskQ, queue<Job *> *spoolerQ)
 {
     //    cout << "Job " << job->jobId << " releasing core\n";
     if (readyQ->size() == 0)
@@ -335,6 +335,10 @@ void coreRelease(vector<Job *> inputTable, vector<int> &jobTable, int &jobsProcc
     else
     {
         // process next job request for job jobID
+        if (job->getRequest() == "DISK")
+        {
+            diskCount++;
+        }
         proccessNextRequest(job, core, disk, spooler, currentTime, eventList, readyQ, diskQ, spoolerQ);
     }
 }
@@ -500,12 +504,11 @@ int main(int argc, char *argv[])
 
         if (event->requestName == "CORE")
         {
-            cpuTime += job->getDuration();
-            coreRelease(inputTable, jobTable, jobsProccessing, MPL, nextJob, jobsInTable, job, core, disk, spooler, currentTime, eventList, &readyQ, &diskQ, &spoolerQ);
+            cpuTime += event->duration;
+            coreRelease(inputTable, jobTable, jobsProccessing, MPL, nextJob, jobsInTable, job, core, disk, diskCount, spooler, currentTime, eventList, &readyQ, &diskQ, &spoolerQ);
         }
         else if (event->requestName == "DISK")
         {
-            diskCount++;
             diskRelease(job, core, disk, spooler, currentTime, eventList, &readyQ, &diskQ, &spoolerQ);
         }
         else if (event->requestName == "PRINT")
