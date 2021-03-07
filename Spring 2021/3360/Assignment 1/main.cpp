@@ -91,7 +91,7 @@ struct EventList
     // add events in order, first time is first in list
     void add(Event *event)
     {
-        cout << "\n\nevent added for job " << event->job->jobId << ", " << event->requestName << ", " << event->duration << ". with comp time: " << event->completionTime << endl;
+        //        cout << "-- Job " << event->job->jobId << " requests " << event->requestName << " access for " << event->duration << ". with comp time: " << event->completionTime << endl;
         bool eventAdded = false;
         if (eventList.size() < 1)
         {
@@ -171,7 +171,7 @@ void printJobUpdate(string update, int jobId, int currentTime, vector<int> jobTa
 
 void coreRequest(Job *job, Device &core, int &currentTime, EventList &eventList, queue<Job *> *readyQ)
 {
-    //    cout << "Job " << job->jobId << " requesting " << job->getRequest() << " for " << job->getDuration() << "ms : Time " << currentTime << endl;
+    cout << "-- Job " << job->jobId << " requests a " << job->getRequest() << " at time " << currentTime << " for " << job->getDuration() << " ms.\n";
     if (core.status == "FREE")
     {
         core.status = "BUSY";
@@ -185,13 +185,14 @@ void coreRequest(Job *job, Device &core, int &currentTime, EventList &eventList,
     {
         // queue jobID in readyQueue
         job->state = "READY";
-        cout << "Job " << job->jobId << " added to ready queue\n";
+        cout << "-- Job " << job->jobId << " must wait for a core.\n";
         readyQ->push(job);
+        cout << "-- Ready queue now contains " << readyQ->size() << " job(s) waiting for a core.\n";
     }
     // cout << "2 core is: " << core.status << endl;
 }
 
-void fetchJobs(vector<Job *> inputTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Device &core, int &currentTime, vector<int> jobTable, EventList &eventList, queue<Job *> *readyQ)
+void fetchJobs(vector<Job *> inputTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Device &core, int &currentTime, vector<int> &jobTable, EventList &eventList, queue<Job *> *readyQ)
 {
 
     while ((jobsProccessing < MPL) && (nextJob < jobsInTable))
@@ -216,10 +217,14 @@ void fetchJobs(vector<Job *> inputTable, int &jobsProccessing, int &MPL, int &ne
 
 //called from core release
 //inputTable, jobTable, job, core, disk, spooler, currentTime, eventList, &readyQ, &diskQ, &spoolerQ
-void terminateJob(vector<Job *> inputTable, vector<int> jobTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Job *job, Device &core, int &currentTime, EventList &eventList, queue<Job *> *readyQ)
+void terminateJob(vector<Job *> inputTable, vector<int> &jobTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Job *job, Device &core, int &currentTime, EventList &eventList, queue<Job *> *readyQ)
 {
+    job->state = "TERMINATED";
+    //    cout << "\nseq: " << job->SeqNum << " size: " << jobTable.size() << endl;
     printJobUpdate("terminates", job->jobId, currentTime, jobTable, inputTable);
     jobsProccessing--;
+    //    jobTable.erase(jobTable.begin()+job->SeqNum);
+    //    inputTable.erase(inputTable.begin()+job->SeqNum);
     fetchJobs(inputTable, jobsProccessing, MPL, nextJob, jobsInTable, core, currentTime, jobTable, eventList, readyQ);
 }
 
@@ -305,9 +310,9 @@ void proccessNextRequest(Job *job, Device &core, Device &disk, Device &spooler, 
     }
 }
 
-void coreRelease(vector<Job *> inputTable, vector<int> jobTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Job *job, Device &core, Device &disk, Device &spooler, int &currentTime, EventList &eventList, queue<Job *> *readyQ, queue<Job *> *diskQ, queue<Job *> *spoolerQ)
+void coreRelease(vector<Job *> inputTable, vector<int> &jobTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Job *job, Device &core, Device &disk, Device &spooler, int &currentTime, EventList &eventList, queue<Job *> *readyQ, queue<Job *> *diskQ, queue<Job *> *spoolerQ)
 {
-    cout << "Job " << job->jobId << " releasing core\n";
+    //    cout << "Job " << job->jobId << " releasing core\n";
     if (readyQ->size() == 0)
     {
         core.status = "FREE";
@@ -317,7 +322,7 @@ void coreRelease(vector<Job *> inputTable, vector<int> jobTable, int &jobsProcce
         // pop first core request in readyQueue
         Job *nextJob = readyQ->front();
         readyQ->pop();
-        cout << "Job " << nextJob->jobId << " removed from ready queue\n";
+        //        cout << "Job " << nextJob->jobId << " removed from ready queue\n";
         // schedule its completion at current_time + how_long
         Event *event = new Event(job->getDuration(), currentTime + nextJob->popDuration(), nextJob->popRequest(), nextJob);
         eventList.add(event);
@@ -336,7 +341,7 @@ void coreRelease(vector<Job *> inputTable, vector<int> jobTable, int &jobsProcce
 
 void diskRelease(Job *job, Device &core, Device &disk, Device &spooler, int &currentTime, EventList &eventList, queue<Job *> *readyQ, queue<Job *> *diskQ, queue<Job *> *spoolerQ)
 {
-    cout << "Job " << job->jobId << " releasing disk\n";
+    //    cout << "Job " << job->jobId << " releasing disk\n";
     if (diskQ->size() == 0)
     {
         disk.status = "FREE";
@@ -346,7 +351,7 @@ void diskRelease(Job *job, Device &core, Device &disk, Device &spooler, int &cur
         // pop first disk request in diskQueue
         Job *nextJob = diskQ->front();
         diskQ->pop();
-        cout << "Job " << nextJob->jobId << " removed from disk queue\n";
+        //        cout << "Job " << nextJob->jobId << " removed from disk queue\n";
         Event *event = new Event(job->getDuration(), currentTime + nextJob->popDuration(), nextJob->popRequest(), nextJob);
         eventList.add(event);
     }
@@ -356,7 +361,7 @@ void diskRelease(Job *job, Device &core, Device &disk, Device &spooler, int &cur
 
 void spoolerRelease(Job *job, Device &core, Device &disk, Device &spooler, int &currentTime, EventList &eventList, queue<Job *> *readyQ, queue<Job *> *diskQ, queue<Job *> *spoolerQ)
 {
-    cout << "Job " << job->jobId << " releasing spooler\n";
+    //    cout << "Job " << job->jobId << " releasing spooler\n";
     if (spoolerQ->size() == 0)
     {
         spooler.status = "FREE";
@@ -366,7 +371,7 @@ void spoolerRelease(Job *job, Device &core, Device &disk, Device &spooler, int &
         // pop first spooler request in diskQueue
         Job *nextJob = spoolerQ->front();
         spoolerQ->pop();
-        cout << "Job " << nextJob->jobId << " removed from spooler queue\n";
+        //        cout << "Job " << nextJob->jobId << " removed from spooler queue\n";
         Event *event = new Event(job->getDuration(), currentTime + nextJob->popDuration(), nextJob->popRequest(), nextJob);
         eventList.add(event);
     }
@@ -441,13 +446,10 @@ int main(int argc, char *argv[])
     //
     // cout << "\nFile opened. Beginning to read from file.\n\n";
     // first line contains MPL
-
     // file >> request >> MPL;
     // cin >> request >> MPL;
 
     // while (file >> request >> duration) {
-    //    cout << "hello\n\n";
-
     while (cin >> request >> duration)
     {
         // Create a new Job object
@@ -478,23 +480,32 @@ int main(int argc, char *argv[])
     fetchJobs(inputTable, jobsProccessing, MPL, nextJob, jobsInTable, core, currentTime, jobTable, eventList, &readyQ);
 
     //// Main ////
+    int diskCount = 0;
+    int cpuTime = 0;
 
     while (eventList.isNotEmpty())
     {
-        eventList.printEvents();
+        //        eventList.printEvents();
         // pop event and do can correct request
         event = eventList.getAndPopEvent();
         currentTime = event->completionTime;
         job = event->job;
 
-        cout << "\nevent popped: Job" << event->job->jobId << ", " << event->requestName << ", completion: " << currentTime << "\n";
+        //        cout << "\nevent popped: Job" << event->job->jobId << ", " << event->requestName << ", completion: " << currentTime << "\n";
+        //    SUMMARY:
+        //    Total elapsed time: 9208 ms
+        //    Number of jobs that completed: 4
+        //    Total number of disk accesses: 62
+        //    CPU utilization: 0.787
 
         if (event->requestName == "CORE")
         {
+            cpuTime += job->getDuration();
             coreRelease(inputTable, jobTable, jobsProccessing, MPL, nextJob, jobsInTable, job, core, disk, spooler, currentTime, eventList, &readyQ, &diskQ, &spoolerQ);
         }
         else if (event->requestName == "DISK")
         {
+            diskCount++;
             diskRelease(job, core, disk, spooler, currentTime, eventList, &readyQ, &diskQ, &spoolerQ);
         }
         else if (event->requestName == "PRINT")
@@ -508,14 +519,16 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < jobsInTable; ++i)
     {
-        // cout << "deleting 'job " << inputTable[i]->jobId << "' at index " << i << endl;
+        cout << "deleting 'job " << inputTable[i]->jobId << "' at index " << i << endl;
         delete inputTable[i];
     }
 
     // print simulation results
-
-    // inputTable have id and resouce
-    // resouce has request of CORE,DISK,and PRINT
+    double util = (float)cpuTime / (float)currentTime;
+    cout << "\n\nSUMMARY:\nTotal elapsed time: " << currentTime << " ms.\n";
+    cout << "Number of jobs that completed: " << jobsInTable << "\n";
+    cout << "Total number of disk accesses: " << diskCount << "\n";
+    cout << "CPU utlization: " << util << "\n";
 
     if (file.is_open())
     {

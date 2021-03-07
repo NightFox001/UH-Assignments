@@ -31,7 +31,7 @@ def cV4():
 
             # Check that the required sum of (B+C) defined by H11. (e + f + 21) is in place of D
             if not (checkConstraintsA2(sumBC(e, f), (e + f + 21), e, f)): continue
-            for c in range(2, 5):          # From rule H16
+            for c in range(2, 5):          # From rule H24
                 nva += 1 #from assigning value to b
                 b = int(sumBC(e, f))-c    # From rule H1
                 nva += 1 #from assigning value to c
