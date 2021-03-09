@@ -1,3 +1,10 @@
+/* 
+Jonathan Hirsch
+COSC 3360
+This assignment uses quite a bit of pointers. Each 'job' is a pointer a Job class object that has a couple lists for that jobs requests and durations. Once an event has been made for this request, it is popped from the list for this job. 
+An Event is described more below, but once an event is created from a jobs request, a pointer to that event is added to an EventList. The main loop will then pop the pointer to the event with the nearest completion time and then make the appropriate requests for that event, passing a pointer for that job as well.
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -529,7 +536,7 @@ int main(int argc, char *argv[])
     cout << "Total number of disk accesses: " << diskCount << "\n";
     cout << "CPU utlization: " << util << "\n";
 
-    
+
     // if (file.is_open())
     // {
     //     file.close();
