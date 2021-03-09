@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Night Fox\\Desktop\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\DVDApplictionCSharp.csproj": {}
+    "C:\\Users\\Night Fox\\Documents\\GitHub\\UH-Assignments\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\DVDApplictionCSharp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Night Fox\\Desktop\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\DVDApplictionCSharp.csproj": {
+    "C:\\Users\\Night Fox\\Documents\\GitHub\\UH-Assignments\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\DVDApplictionCSharp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Night Fox\\Desktop\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\DVDApplictionCSharp.csproj",
+        "projectUniqueName": "C:\\Users\\Night Fox\\Documents\\GitHub\\UH-Assignments\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\DVDApplictionCSharp.csproj",
         "projectName": "DVDApplictionCSharp",
-        "projectPath": "C:\\Users\\Night Fox\\Desktop\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\DVDApplictionCSharp.csproj",
+        "projectPath": "C:\\Users\\Night Fox\\Documents\\GitHub\\UH-Assignments\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\DVDApplictionCSharp.csproj",
         "packagesPath": "C:\\Users\\Night Fox\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Night Fox\\Desktop\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\obj\\",
+        "outputPath": "C:\\Users\\Night Fox\\Documents\\GitHub\\UH-Assignments\\Spring 2021\\4351\\Assignment 2\\DVDApplictionCSharp\\DVDApplictionCSharp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Night Fox\\AppData\\Roaming\\NuGet\\NuGet.Config",

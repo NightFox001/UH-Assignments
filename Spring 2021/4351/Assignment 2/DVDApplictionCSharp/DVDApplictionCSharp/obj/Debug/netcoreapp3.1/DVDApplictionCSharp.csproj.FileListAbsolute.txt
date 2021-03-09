@@ -1,0 +1,4 @@
+C:\Users\Night Fox\Documents\GitHub\UH-Assignments\Spring 2021\4351\Assignment 2\DVDApplictionCSharp\DVDApplictionCSharp\obj\Debug\netcoreapp3.1\DVDApplictionCSharp.csprojAssemblyReference.cache
+C:\Users\Night Fox\Documents\GitHub\UH-Assignments\Spring 2021\4351\Assignment 2\DVDApplictionCSharp\DVDApplictionCSharp\obj\Debug\netcoreapp3.1\DVDApplictionCSharp.AssemblyInfoInputs.cache
+C:\Users\Night Fox\Documents\GitHub\UH-Assignments\Spring 2021\4351\Assignment 2\DVDApplictionCSharp\DVDApplictionCSharp\obj\Debug\netcoreapp3.1\DVDApplictionCSharp.AssemblyInfo.cs
+C:\Users\Night Fox\Documents\GitHub\UH-Assignments\Spring 2021\4351\Assignment 2\DVDApplictionCSharp\DVDApplictionCSharp\obj\Debug\netcoreapp3.1\DVDApplictionCSharp.csproj.CoreCompileInputs.cache
