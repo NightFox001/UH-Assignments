@@ -96,7 +96,6 @@ struct EventList
         if (eventList.size() < 1)
         {
             eventList.push_front(event);
-            //            cout << "event " << event->requestName << " insterted 1\n\n";
             eventAdded = true;
         }
         else
@@ -107,7 +106,6 @@ struct EventList
                 if (event->completionTime < (*itr)->completionTime)
                 {
                     eventList.insert(itr, event);
-                    //                    cout << "event " << event->requestName << " insterted 2\n\n";
                     eventAdded = true;
                     break;
                 }
@@ -117,7 +115,6 @@ struct EventList
                 eventList.push_back(event);
             }
         }
-        //                this->printEvents();
     }
 
     bool isNotEmpty()
@@ -194,7 +191,6 @@ void coreRequest(Job *job, Device &core, int &currentTime, EventList &eventList,
 
 void fetchJobs(vector<Job *> inputTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Device &core, int &currentTime, vector<int> &jobTable, EventList &eventList, queue<Job *> *readyQ)
 {
-
     while ((jobsProccessing < MPL) && (nextJob < jobsInTable))
     {
         jobsProccessing++;
@@ -220,7 +216,6 @@ void fetchJobs(vector<Job *> inputTable, int &jobsProccessing, int &MPL, int &ne
 void terminateJob(vector<Job *> inputTable, vector<int> &jobTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Job *job, Device &core, int &currentTime, EventList &eventList, queue<Job *> *readyQ)
 {
     job->state = "TERMINATED";
-    //    cout << "\nseq: " << job->SeqNum << " size: " << jobTable.size() << endl;
     printJobUpdate("terminates", job->jobId, currentTime, jobTable, inputTable);
     jobsProccessing--;
     //    jobTable.erase(jobTable.begin()+job->SeqNum);
@@ -243,7 +238,7 @@ void diskRequest(Job *job, Device &core, Device &disk, Device &spooler, int &cur
         }
         else
         {
-            cout << "\nCORE wasn't requested after DISK\n\n";
+            cout << "\nERROR: CORE wasn't requested after DISK\n\n";
         }
     }
     else if (disk.status == "FREE")
@@ -274,7 +269,7 @@ void spoolerRequest(Job *job, Device &core, Device &disk, Device &spooler, int &
         }
         else
         {
-            cout << "\nCORE wasn't requested after PRINT\n\n";
+            cout << "\nERROR: CORE wasn't requested after PRINT\n\n";
         }
     }
     else if (spooler.status == "FREE")
@@ -312,7 +307,7 @@ void proccessNextRequest(Job *job, Device &core, Device &disk, Device &spooler, 
 
 void coreRelease(vector<Job *> inputTable, vector<int> &jobTable, int &jobsProccessing, int &MPL, int &nextJob, int &jobsInTable, Job *job, Device &core, Device &disk, int &diskCount, Device &spooler, int &currentTime, EventList &eventList, queue<Job *> *readyQ, queue<Job *> *diskQ, queue<Job *> *spoolerQ)
 {
-    //    cout << "Job " << job->jobId << " releasing core\n";
+    cout << "Job " << job->jobId << " releasing core\n";
     if (readyQ->size() == 0)
     {
         core.status = "FREE";
@@ -324,7 +319,7 @@ void coreRelease(vector<Job *> inputTable, vector<int> &jobTable, int &jobsProcc
         readyQ->pop();
         //        cout << "Job " << nextJob->jobId << " removed from ready queue\n";
         // schedule its completion at current_time + how_long
-        Event *event = new Event(job->getDuration(), currentTime + nextJob->popDuration(), nextJob->popRequest(), nextJob);
+        Event *event = new Event(nextJob->getDuration(), currentTime + nextJob->popDuration(), nextJob->popRequest(), nextJob);
         eventList.add(event);
     }
     if (job->isDone())
@@ -356,7 +351,7 @@ void diskRelease(Job *job, Device &core, Device &disk, Device &spooler, int &cur
         Job *nextJob = diskQ->front();
         diskQ->pop();
         //        cout << "Job " << nextJob->jobId << " removed from disk queue\n";
-        Event *event = new Event(job->getDuration(), currentTime + nextJob->popDuration(), nextJob->popRequest(), nextJob);
+        Event *event = new Event(nextJob->getDuration(), currentTime + nextJob->popDuration(), nextJob->popRequest(), nextJob);
         eventList.add(event);
     }
     // process next job request for job jobID
@@ -376,7 +371,7 @@ void spoolerRelease(Job *job, Device &core, Device &disk, Device &spooler, int &
         Job *nextJob = spoolerQ->front();
         spoolerQ->pop();
         //        cout << "Job " << nextJob->jobId << " removed from spooler queue\n";
-        Event *event = new Event(job->getDuration(), currentTime + nextJob->popDuration(), nextJob->popRequest(), nextJob);
+        Event *event = new Event(nextJob->getDuration(), currentTime + nextJob->popDuration(), nextJob->popRequest(), nextJob);
         eventList.add(event);
     }
     // process next job request for job jobID
@@ -495,8 +490,6 @@ int main(int argc, char *argv[])
         currentTime = event->completionTime;
         job = event->job;
 
-        //        cout << "\nevent popped: Job" << event->job->jobId << ", " << event->requestName << ", completion: " << currentTime << "\n";
-        //    SUMMARY:
         //    Total elapsed time: 9208 ms
         //    Number of jobs that completed: 4
         //    Total number of disk accesses: 62
@@ -504,6 +497,7 @@ int main(int argc, char *argv[])
 
         if (event->requestName == "CORE")
         {
+            cout << "\n\nAdding " << event->duration << " to CPU count from job " << event->job->jobId << " \n\n";
             cpuTime += event->duration;
             coreRelease(inputTable, jobTable, jobsProccessing, MPL, nextJob, jobsInTable, job, core, disk, diskCount, spooler, currentTime, eventList, &readyQ, &diskQ, &spoolerQ);
         }
@@ -517,12 +511,8 @@ int main(int argc, char *argv[])
         }
     }
 
-    // cout << "after fetch core is: " << core.status << endl;
-    // cout << "\nafter fetch first job req: " << inputTable[0]->getRequest() << "\n\n";
-
     for (int i = 0; i < jobsInTable; ++i)
     {
-        cout << "deleting 'job " << inputTable[i]->jobId << "' at index " << i << endl;
         delete inputTable[i];
     }
 
